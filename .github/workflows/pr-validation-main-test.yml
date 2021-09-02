@@ -8,6 +8,7 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -35,4 +36,14 @@ jobs:
           java -jar mycat2/target/mycat2-1.20-jar-with-dependencies.jar &
           sleep 10s
           mvn test -pl example -am
+          
+      - name: Thundra Maven Test Instrumentation
+        uses: thundra-io/thundra-maven-test-action@v1
+        with:
+          apikey: ${{ secrets.THUNDRA_API_KEY }}
+          project_id: ${{ secrets.THUNDRA_PROJECT_ID }}
+          command: mvn clean install 
+        env:
+          THUNDRA_AGENT_REPORT_REST_BASEURL: https://collector.thundra.us/v1
+          THUNDRA_AGENT_BROKER_ENABLE: false
 
